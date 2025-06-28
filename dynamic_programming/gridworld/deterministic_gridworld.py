@@ -3,15 +3,19 @@ import numpy as np
 from policy_grid import policy_grid
 policy_threshold = 0.01
 gamma = 0.9
-
+policy_grid = np.array([
+            ['U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'],
+            ['U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'],
+            ['U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'],
+            ['U', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'G'],
+        ])
 arrow_map = {
-    'U' : '⬆︎', # Keep the up arrow
+    'U' : '⬆︎',
     'D' : '⬇︎',
     'L' : '⬅︎',
     'R' : '➡︎',
 }
-actions = {'U', 'D', 'L', 'R'} # Using a set is fine
-
+actions = {'U', 'D', 'L', 'R'}
 states_coords_np_list = np.argwhere(policy_grid=='U')
 goal_coord_tuple = tuple(np.argwhere(policy_grid=='G').squeeze())
 
