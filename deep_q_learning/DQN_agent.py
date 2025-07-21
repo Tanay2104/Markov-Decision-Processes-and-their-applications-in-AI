@@ -89,10 +89,6 @@ class DQN_agent:
             off_layer.weights = np.copy(q_layer.weights)
             off_layer.biases = np.copy(q_layer.biases)
 
-    def learn_total(self, intitial_epsilon=1.0, final_epsilon=0.01, epsilon_decay_rate=0.9999, learning_rate=0.001, target_update_frequency=1000, 
-              learning_starts=1000, epochs=2000):
-        pass
-
 if __name__ == "__main__":
     import gymnasium as gym
 

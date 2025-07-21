@@ -37,7 +37,9 @@ def train(initial_epsilon = INITIAL_EPSILON, final_epsilon = FINAL_EPSILON, epsi
     total_steps = 0
     cumulative_rewards = []
 
-    print(f"Starting training with following hyperparameters: Learning Rate: {learning_rate}, Epochs: {epochs}, Gamma: {gamma}, Batch Size: {batch_size}, Initial Epsilon: {initial_epsilon}, Final Epsilon: {final_epsilon}, epsilon decay rate: {epsilon_decay_rate}")
+    print(f"Starting training with following hyperparameters: \n")
+    print(f" Learning Rate: {learning_rate}, Epochs: {epochs}, Gamma: {gamma}, Batch Size: {batch_size}, Target update frequency: {target_update_frequency} ")       
+    print(f"Initial Epsilon: {initial_epsilon}, Final Epsilon: {final_epsilon}, epsilon decay rate: {epsilon_decay_rate}")
     for i in range(epochs):
         old_observation, _ = env.reset()
         cumulative_reward = 0
@@ -105,7 +107,7 @@ def train(initial_epsilon = INITIAL_EPSILON, final_epsilon = FINAL_EPSILON, epsi
 
     return cumulative_rewards
 
-def plot_graphs(variable, *args):
+def plot_graph_cumulative_reward(variable, *args):
     for cumulative_reward_list, variable_value in args:
         plt.plot(cumulative_reward_list, label=variable_value)
 
@@ -113,10 +115,26 @@ def plot_graphs(variable, *args):
     plt.ylabel("Cumulative Reward per epsiode")
     plt.title(f"Variation of Cumulative Reward with {variable}")
     plt.legend()
-    plt.savefig(f"Results with variable {variable}",  dpi=200, bbox_inches='tight')
+    plt.savefig(f"Results with variable {variable}",  dpi=300, bbox_inches='tight')
+
+def plot_graph_rolling_cumulative_reward(variable, *args):
+    rolling_window = 100
+
+    for cumulative_reward_list, variable_value in args:
+        cs = np.cumsum(cumulative_reward_list, dtype=float)
+        moving_averages = (cs[rolling_window:] - cs[:-rolling_window]) / rolling_window
+        
+        plt.plot(moving_averages, label=variable_value)
+    
+    plt.xlabel(f"Number of Epochs (smoothed over {rolling_window} episodes)")
+    plt.ylabel("Cumulative Reward per epsiode")
+    plt.title(f"Variation of Cumulative Reward with {variable}")
+    plt.legend()
+    plt.savefig(f"Rolling Results with variable {variable}",  dpi=300, bbox_inches='tight')
+    plt.show()
 
 
-n = 5
+n = 3
 if len(sys.argv) < 4:
     print(f"Usage: python lunar_lander.py learning_rate/gamma/batch_size/target_update_frequency visualise[True][False] save_model_logs[True][False]")
     sys.exit()
@@ -126,13 +144,14 @@ visualise = (sys.argv[2].lower() == 'true')
 save_model_logs = (sys.argv[3].lower() == 'true')
 data=[]
 if variable=="learning_rate":
-    for lr in [0.01, 0.001, 0.0005, 0.0001]:
+    for lr in [0.01, 0.003, 0.002, 0.001, 0.0001]:
         cumulative_rewards = []
         for i in range(n):
             cumulative_rewards.append(train(visualise=visualise, save=save_model_logs, learning_rate=lr))
         cumulative_rewards = np.array(cumulative_rewards)
         data.append((np.average(cumulative_rewards, axis=0), lr))
-    plot_graphs("Learning Rate", *data)
+    #plot_graph_cumulative_reward("Learning Rate", *data)
+    plot_graph_rolling_cumulative_reward("Learning Rate", *data)
 
 elif variable=="gamma":
     for gamma in [0.9, 0.99, 0.995, 0.999, 1.000]:
@@ -141,8 +160,8 @@ elif variable=="gamma":
             cumulative_rewards.append(train(visualise=visualise,save=save_model_logs, gamma=gamma))
         cumulative_rewards = np.array(cumulative_rewards)
         data.append((np.average(cumulative_rewards, axis=0), gamma))
-    plot_graphs("Gamma", *data)
-
+    #plot_graph_cumulative_reward("Gamma", *data)
+    plot_graph_rolling_cumulative_reward("Gamma", *data)
 elif variable=="batch_size":
     for batch_size in [1, 25, 50, 100, 200]:
         cumulative_rewards = []
@@ -150,7 +169,8 @@ elif variable=="batch_size":
             cumulative_rewards.append(train(visualise=visualise,save=save_model_logs,batch_size=batch_size))
         cumulative_rewards = np.array(cumulative_rewards)
         data.append((np.average(cumulative_rewards, axis=0), batch_size))
-    plot_graphs("Batch Size", *data)
+    #plot_graph_cumulative_reward("Batch size", *data)
+    plot_graph_rolling_cumulative_reward("Batch size", *data)
 
 elif variable=="target_update_frequency":
     for target_update_frequency in [100, 500, 1000, 4000, 8000]:
@@ -159,4 +179,5 @@ elif variable=="target_update_frequency":
             cumulative_rewards.append(train(visualise=visualise,save=save_model_logs,target_update_frequency=target_update_frequency))
         cumulative_rewards = np.array(cumulative_rewards)
         data.append((np.average(cumulative_rewards, axis=0), target_update_frequency))
-    plot_graphs("Epochs", *data)
+    #plot_graph_cumulative_reward("Target Update Frequency", *data)
+    plot_graph_rolling_cumulative_reward("Target Update Frequency", *data)
