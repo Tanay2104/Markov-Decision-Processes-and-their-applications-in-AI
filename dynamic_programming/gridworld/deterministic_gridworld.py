@@ -3,12 +3,7 @@ import numpy as np
 from policy_grid import policy_grid
 policy_threshold = 0.01
 gamma = 0.9
-policy_grid = np.array([
-            ['U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'],
-            ['U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'],
-            ['U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'],
-            ['U', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'G'],
-        ])
+
 arrow_map = {
     'U' : '⬆︎',
     'D' : '⬇︎',
@@ -40,6 +35,7 @@ def show_policy_plot(current_policy_grid):
             else:
                 arrow_char = arrow_map.get(cell_content, '?')
                 plt.text(j, i, arrow_char, ha='center', va='center', color='black', fontsize=100/current_policy_grid.shape[0] + 5)
+    plt.savefig("Policy solving GridWorld problem")
     plt.show()
 
 def get_next_state_and_reward(current_s_np, action_char, grid, grid_goal_tuple):

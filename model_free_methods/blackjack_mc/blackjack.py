@@ -201,5 +201,3 @@ class Player():
             elif move == 's':
                 self.episode_data.append([(old_sum, usable_ace, dealer_up_card), move, None])
                 break
-        
-            

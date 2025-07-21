@@ -2,7 +2,7 @@ import random
 import matplotlib.pyplot as plt
 from helpers import flatten
 
-class QLearning():
+class Sarsa():
     def __init__(self, env, alpha = 0.1, epsilon = 0.2, gamma = 0.8):
         self.action_space = flatten.get_all_possible_actions(env.action_space)
         self.env = env
@@ -22,16 +22,15 @@ class QLearning():
     def improve_q_value_per_episode(self):
         state, info = self.env.reset()
         total_reward = 0
+        action = self.get_action(state)
         while True:
-            action = self.get_action(state)
             observation, reward, terminated, truncated, info = self.env.step(action)
             done = terminated or truncated
             if terminated:
                 q_next = 0
                 new_action = action 
             else:
-                q_values_for_state = {action: self.q_values.get((observation, action), 0.0) for action in self.action_space}
-                new_action =  max(q_values_for_state, key=q_values_for_state.get)
+                new_action = self.get_action(observation)
                 q_next = self.q_values.get((observation, new_action), 0.0)
 
             current_q = self.q_values.get((state, action), 0.0)
@@ -39,6 +38,7 @@ class QLearning():
             self.q_values[(state, action)] = current_q + self.alpha * (reward + self.gamma * q_next - current_q)
 
             state = observation
+            action = new_action
             total_reward+=reward
 
             if done:
@@ -72,7 +72,7 @@ class QLearning():
         plt.suptitle("Cumulative Reward vs number of episodes plot")
         plt.title(f'Env: {self.env.spec.id}, alpha: {self.alpha}, epsilon: {self.epsilon}, gamma: {self.gamma}', 
                  horizontalalignment='center', fontsize=10, color='gray')
-        plt.savefig("Cumulative Reward vs number of episodes plot: Q-Learning")
+        plt.savefig("Cumulative Reward vs number of episodes plot: SARSA")
         if show: plt.show()
         
     def visualise_sample_episode(self):
@@ -99,16 +99,16 @@ class QLearning():
 if __name__ == '__main__':
     import gymnasium as gym
 
-    env = gym.make("Taxi-v3", render_mode=None)
+    env = gym.make("CliffWalking-v1", render_mode=None)
 
-    q_learning_agent = QLearning(
+    sarsa_agent = Sarsa(
         env = env,
         alpha=0.1,
-        epsilon=0.1,
+        epsilon=0.2,
         gamma=0.99
     )
 
 
-    q_learning_agent.train(iterations=10000)
-    q_learning_agent.visualise_cumulative_reward_density(show=False)
-    q_learning_agent.visualise_sample_episode()
+    sarsa_agent.train(iterations=500)
+    sarsa_agent.visualise_cumulative_reward_density(show=False)
+    sarsa_agent.visualise_sample_episode()
