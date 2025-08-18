@@ -2,7 +2,7 @@
 **Author:** Tanay Jha
 
 ## Project Overview
-This project presents a comprehensive study of Reinforcement Learning (RL), tracing a path from the foundational principles of automata and logic to the practical implementation of a Deep Q-Network (DQN) from scratch. The work is structured as a series of self-contained modules, each tackling a core concept in RL with both theoretical explanations (see `/reports`) and practical code implementations.
+This project presents a comprehensive study of Reinforcement Learning (RL), tracing a path from the foundational principles of automata and logic to the practical implementation of a Deep Q-Network (DQN) from scratch. The work is structured as a series of self-contained modules, each tackling a core concept in RL with both theoretical explanations (see `/reports`) and practical code implementations. A video presentation of Function approximation and the DQN implemented is available here: https://drive.google.com/file/d/1kTiBiaaamPrhEronTr3xJGdL43ApDWma/view?usp=sharing
 
 The project demonstrates a systematic progression of learning:
 1.  **Exploration vs. Exploitation:** Understanding the core trade-off using classic Multi-Armed Bandit problems.
